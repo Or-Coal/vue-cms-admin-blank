@@ -4,49 +4,149 @@
         <el-sub-menu index="1">
             <template #title>
                 <el-icon>
-                    <location />
+                    <Clock />
                 </el-icon>
-                <span>Navigator One</span>
+                <span>信息面板</span>
             </template>
-            <el-menu-item-group title="Group One">
-                <el-menu-item index="1-1">item one</el-menu-item>
-                <el-menu-item index="1-2">item two</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group title="Group Two">
-                <el-menu-item index="1-3">item three</el-menu-item>
-            </el-menu-item-group>
-            <el-sub-menu index="1-4">
-                <template #title>item four</template>
-                <el-menu-item index="1-4-1">item one</el-menu-item>
-            </el-sub-menu>
         </el-sub-menu>
-        <el-menu-item index="2">
+
+        <el-sub-menu index="2">
+            <template #title>
+                <el-icon>
+                    <Document />
+                </el-icon>
+                <span>文章管理</span>
+            </template>
+            <el-menu-item index="2-1">
+                <el-icon>
+                    <DocumentAdd />
+                </el-icon>
+                <span>发布文章</span>
+            </el-menu-item>
+            <el-menu-item index="2-2">
+                <el-icon>
+                    <Memo />
+                </el-icon>
+                <span>文章列表</span>
+            </el-menu-item>
+            <el-menu-item index="2-3">
+                <el-icon>
+                    <Discount />
+                </el-icon>
+                <span>标签管理</span>
+            </el-menu-item>
+            <el-menu-item index="2-3">
+                <el-icon>
+                    <ChatLineSquare />
+                </el-icon>
+                <span>评论管理</span>
+            </el-menu-item>
+        </el-sub-menu>
+
+        <el-menu-item index="3">
             <el-icon>
-                <icon-menu />
+                <DataAnalysis />
             </el-icon>
-            <span>Navigator Two</span>
+            <span>分类管理</span>
         </el-menu-item>
-        <el-menu-item index="3" disabled>
+
+        <el-sub-menu index="4">
+            <template #title>
+                <el-icon>
+                    <DataBoard />
+                </el-icon>
+                <span>公告管理</span>
+            </template>
+            <el-menu-item index="4-1">
+                <el-icon>
+                    <Calendar />
+                </el-icon>
+                <span>发布公告</span>
+            </el-menu-item>
+            <el-menu-item index="4-2">
+                <el-icon>
+                    <DataAnalysis />
+                </el-icon>
+                <span>公告列表</span>
+            </el-menu-item>
+        </el-sub-menu>
+
+        <el-sub-menu index="5">
+            <template #title>
+                <el-icon>
+                    <OfficeBuilding />
+                </el-icon>
+                <span>用户管理</span>
+            </template>
+            <el-menu-item index="5-1">
+                <el-icon>
+                    <User />
+                </el-icon>
+                <span>用户列表</span>
+            </el-menu-item>
+        </el-sub-menu>
+
+        <el-sub-menu index="6">
+            <template #title>
+                <el-icon>
+                    <SetUp />
+                </el-icon>
+                <span>推广管理</span>
+            </template>
+            <el-menu-item index="6-1">
+                <el-icon>
+                    <Picture />
+                </el-icon>
+                <span>轮播图管理</span>
+            </el-menu-item>
+            <el-menu-item index="6-2">
+                <el-icon>
+                    <Link />
+                </el-icon>
+                <span>友情链接</span>
+            </el-menu-item>
+        </el-sub-menu>
+
+        <el-sub-menu index="7">
+            <template #title>
+                <el-icon>
+                    <setting />
+                </el-icon>
+                <span>系统管理</span>
+            </template>
+            <el-menu-item index="7-1">
+                <el-icon>
+                    <Medal />
+                </el-icon>
+                <span>管理员管理</span>
+            </el-menu-item>
+            <el-menu-item index="7-2">
+                <el-icon>
+                    <TurnOff />
+                </el-icon>
+                <span>权限角色</span>
+            </el-menu-item>
+            <el-menu-item index="7-3">
+                <el-icon>
+                    <SetUp />
+                </el-icon>
+                <span>菜单管理</span>
+            </el-menu-item>
+        </el-sub-menu>
+        <el-menu-item index="8">
             <el-icon>
-                <document />
+                <Postcard />
             </el-icon>
-            <span>Navigator Three</span>
-        </el-menu-item>
-        <el-menu-item index="4">
-            <el-icon>
-                <setting />
-            </el-icon>
-            <span>Navigator Four</span>
+            <span>账户设置</span>
         </el-menu-item>
     </el-menu>
     </div>
-
 </template>
 <script>
 </script>
 <style lang='less' scoped>
-.bg{
-    background-color:#545c64;
+.bg {
+    background-color: #545c64;
     min-height: calc(100vh - 60px);
 }
 </style>

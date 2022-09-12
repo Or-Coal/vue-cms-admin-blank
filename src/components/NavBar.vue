@@ -2,9 +2,7 @@
     <div class="nav-bar">
         <div class="left">
             <img src="../assets/img/common/logo.png" class="logo" alt="logo">
-            <el-icon :size="20">
-                <Expand />
-            </el-icon>
+            <el-icon :size="20"><Fold /></el-icon>
         </div>
         <el-menu mode="horizontal" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b"
             :ellipsis="false">
