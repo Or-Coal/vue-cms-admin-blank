@@ -6,15 +6,33 @@
                     <span>立即注册</span>
                 </div>
             </template>
-            <el-form :model="form" label-width="40px">
-                <el-form-item label="账号">
-                    <el-input v-model="form.name" />
+            <el-form :model="form" label-width="80px" :rules="rules" ref="formRef">
+                <el-form-item label="账号" prop="username">
+                    <el-input v-model="form.username" />
                 </el-form-item>
-                <el-form-item label="密码">
+                <el-form-item label="密码" prop="password">
                     <el-input show-password v-model="form.password" />
                 </el-form-item>
+                <el-form-item label="确认密码" prop="password_affirm">
+                    <el-input show-password v-model="form.password_affirm" />
+                </el-form-item>
+                <el-form-item label="姓名" prop="name">
+                    <el-input v-model="form.name" />
+                </el-form-item>
+                <el-form-item label="性别" prop="sex">
+                    <el-radio-group v-model="form.sex">
+                        <el-radio label="男" />
+                        <el-radio label="女" />
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="手机号码" prop="phone">
+                    <el-input v-model="form.phone" />
+                </el-form-item>
                 <el-form-item>
-                    <el-button color="#626aef" :dark="isDark">注册</el-button>
+                    <el-checkbox label="同意本站用户协议" name="type" v-model="form.type" />
+                </el-form-item>
+                <el-form-item>
+                    <el-button color="#626aef" :disabled="!form.type">注册</el-button>
                 </el-form-item>
                 <el-row class="row-bg" justify="space-between">
                     <el-col :span="5">
@@ -29,10 +47,75 @@
     </div>
 </template>
 <script setup>
-import { reactive } from 'vue'
+import { ref, reactive } from 'vue'
 const form = reactive({
+    username: '',
+    password: '',
+    password_affirm: '',
     name: '',
-    password: ''
+    sex: '男',
+    phone: '',
+    type: false
+})
+let formRef = ref()
+const validatePass = (rule, value, callback) => {
+    console.log(rule, value, callback)
+    // 非空校验
+    if (value === '') {
+        callback(new Error('请输入密码'))
+        return
+    }
+    // 有效性校验
+    let isValid = /\d{3,}/.test(value)
+    if (!isValid) {
+        callback(new Error('密码长度至少为3位数字'))
+        return
+    }
+    // 校验确认密码框
+    if (form.password_affirm) {
+        formRef.value?.validateField('password_affirm', () => null)
+        callback()
+    }
+}
+
+const validatePass2 = (rule, value, callback) => {
+    if (value === '') {
+        callback(new Error('请再次输入密码'))
+        return
+    }
+    // 两次密码不一致
+    if (value !== form.password) {
+        callback(new Error('两次密码输入不一致'))
+        return
+    }
+    // 全部通过校验
+    callback()
+}
+const rules = reactive({
+    username: [
+
+        { required: true, message: '请输入账号!', trigger: 'blur' },
+        { min: 3, max: 20, message: '账户长度要求在3-20之间', trigger: 'blur' }
+    ],
+    password: [
+        { required: true },
+        { validator: validatePass, trigger: 'blur' }
+    ],
+    password_affirm:
+        [
+            { required: true },
+            { validator: validatePass2, trigger: 'blur' }],
+    name: [
+        { required: true, message: '请输入账号!', trigger: 'blur' },
+        { min: 3, max: 20, message: '账户长度要求在3-20之间', trigger: 'blur' }
+    ],
+    sex: [{
+        required: true,
+        message: '请选择性别',
+        trigger: 'change',
+    }],
+    phone: [{ required: true, message: '请输入您的手机号码!', trigger: 'blur' },
+    { pattern: /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/, message: '请输入正确的手机号', trigger: 'blur' }]
 })
 </script>
 <style lang='less' scoped>
@@ -41,6 +124,7 @@ const form = reactive({
     min-height: 100vh;
     background: url(../assets/img/register/bg.jpg) top center;
     background-size: cover;
+
     .form-card {
         position: absolute;
         top: 50%;

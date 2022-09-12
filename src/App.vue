@@ -16,6 +16,7 @@ export default defineComponent({
 
 <template>
     <el-config-provider>
+      <!-- 一级路由挂载点 -->
       <RouterView />
   </el-config-provider>
 </template>

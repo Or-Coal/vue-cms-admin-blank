@@ -6,15 +6,15 @@
                     <span>登录</span>
                 </div>
             </template>
-            <el-form :model="form" label-width="40px">
-                <el-form-item label="账号">
-                    <el-input v-model="form.name" />
+            <el-form :model="form"  :rules="rules" label-width="40px" ref="formRef">
+                <el-form-item label="账号" prop="username" label-width="50px">
+                    <el-input v-model="form.name"  />
                 </el-form-item>
-                <el-form-item label="密码">
+                <el-form-item label="密码" prop="password" label-width="50px">
                     <el-input show-password v-model="form.password" />
                 </el-form-item>
                 <el-form-item>
-                    <el-button color="#626aef" :dark="isDark">登录</el-button>
+                    <el-button color="#626aef" :dark="isDark" v-on:click="handleSubmit(formRef)">登录</el-button>
                 </el-form-item>
                 <el-row class="row-bg" justify="space-between">
                     <el-col :span="5">
@@ -29,12 +29,33 @@
     </div>
 </template>
 <script setup>
-import { reactive } from 'vue'
+import {ref, reactive } from 'vue'
 const form = reactive({
-    name: '',
+    username: '',
     password: ''
 })
+// 获取form组件实例
+let formRef = ref()
+const rules = reactive({
+    username: [
+        { required: true, message: '请输入账号!', trigger: 'blur' },
+        { min: 3, max: 20, message: '账户长度要求在3-20之间', trigger: 'blur' }
+    ],
+    password: [
+        { required: true, message: '请输入密码!', trigger: 'blur' },
+        { pattern: /\d{3,}/, message: '密码长度要求至少3位数字', trigger: 'blur' }
+    ],
+
+})
+// 登录
+function handleSubmit(formEl){
+    console.log(formEl)
+    formEl.validate(valid =>{
+console.log(valid)
+    })
+}
 </script>
+
 <style lang='less' scoped>
 .bg {
     position: relative;
