@@ -3,7 +3,7 @@
         <el-card class="box-card form-card">
             <template #header>
                 <div class="card-header">
-                    <span>登录</span>
+                    <span>立即注册</span>
                 </div>
             </template>
             <el-form :model="form" label-width="40px">
@@ -14,11 +14,11 @@
                     <el-input show-password v-model="form.password" />
                 </el-form-item>
                 <el-form-item>
-                    <el-button color="#626aef" :dark="isDark">登录</el-button>
+                    <el-button color="#626aef" :dark="isDark">注册</el-button>
                 </el-form-item>
                 <el-row class="row-bg" justify="space-between">
                     <el-col :span="5">
-                        <el-link href="/#/Register" type="success">注册账号</el-link>
+                        <el-link href="/#/Login" type="success">登录账户</el-link>
                     </el-col>
                     <el-col :span="4.5">
                         <el-link type="warning">忘记密码</el-link>
@@ -39,7 +39,7 @@ const form = reactive({
 .bg {
     position: relative;
     min-height: 100vh;
-    background: url(../assets/img/login/bg.jpg) top center;
+    background: url(../assets/img/register/bg.jpg) top center;
     background-size: cover;
     .form-card {
         position: absolute;

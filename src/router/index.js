@@ -5,12 +5,17 @@ const router = createRouter({
   routes: [
     {
       path: '/Login',
-      alias:'/',
+      alias: '/',
       name: 'Login',
       component: () => import('@/views/Login.vue')
-
+    },
+    {
+      path: '/Register',
+      name: 'Register',
+      component: () => import('@/views/Register.vue')
     }
   ]
+
 })
 
 export default router
