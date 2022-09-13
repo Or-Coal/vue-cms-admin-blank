@@ -14,11 +14,10 @@ const router = createRouter({
       name: 'Register',
       component: () => import('@/views/Register.vue')
     },
-    // 一级地址
     {
-path:'/admin',
-name:'Admin',
-component:Layout,
+      path: '/admin',
+      name: 'Admin',
+      component: Layout,
 
     },
     {
@@ -29,6 +28,21 @@ component:Layout,
         {
           path: 'list',
           component: () => import('@/views/Article/List.vue'),
+        },
+        {
+          path: 'release',
+          component: () => import('@/views/Article/Release.vue'),
+        },
+      ]
+    },
+    {
+      path: '/manage',
+      name: 'Manage',
+      component: Layout,
+      children: [
+        {
+          path: 'list',
+          component: () => import('@/views/Manage/List.vue'),
         },
         {
           path: 'release',
