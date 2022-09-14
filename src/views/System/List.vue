@@ -14,7 +14,7 @@
             <el-table-column prop="mail" label="邮箱" width="150" />
             <el-table-column prop="photo" label="头像" width="70">
                 <template #default="scope">
-                    <img width="40" :src="scope.row.photo" alt="">
+                    <el-avatar :src="scope.row.photo" />
                 </template>
             </el-table-column>
             <el-table-column prop="person" label="角色" width="130">
@@ -65,7 +65,7 @@ const arrlist = ref([
         sex: "男",
         tel: "19873620127",
         mail: "r123456@126.com",
-        photo: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Ffile02.16sucai.com%2Fd%2Ffile%2F2014%2F0729%2Fdb3d552a2af85765b98fc79a6db222b0.jpg&refer=http%3A%2F%2Ffile02.16sucai.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1665582275&t=30b6c626af31e279b139d93b6e32743d',
+        photo: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
         person: "管理员",
     },
     {
@@ -85,7 +85,7 @@ const arrlist = ref([
         sex: "男",
         tel: "19872630135",
         mail: "p123456@126.com",
-        photo: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Ffile02.16sucai.com%2Fd%2Ffile%2F2014%2F0729%2Fdb3d552a2af85765b98fc79a6db222b0.jpg&refer=http%3A%2F%2Ffile02.16sucai.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1665582275&t=30b6c626af31e279b139d93b6e32743d',
+        photo: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
         person: "超级管理员",
     },
 ]);

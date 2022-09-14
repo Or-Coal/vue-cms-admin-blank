@@ -6,9 +6,9 @@
                     <span>登录</span>
                 </div>
             </template>
-            <el-form :model="form"  :rules="rules" label-width="40px" ref="formRef">
+            <el-form :model="form" :rules="rules" label-width="40px" ref="formRef">
                 <el-form-item label="账号" prop="username" label-width="50px">
-                    <el-input v-model="form.name"  />
+                    <el-input v-model="form.username" />
                 </el-form-item>
                 <el-form-item label="密码" prop="password" label-width="50px">
                     <el-input show-password v-model="form.password" />
@@ -29,7 +29,9 @@
     </div>
 </template>
 <script setup>
-import {ref, reactive } from 'vue'
+import { ref, reactive } from 'vue'
+import {login} from '@/api/admin.js'
+import { useRouter } from 'vue-router'
 const form = reactive({
     username: '',
     password: ''
@@ -47,11 +49,33 @@ const rules = reactive({
     ],
 
 })
+// 拿到小router 实例对象
+const router = useRouter()
 // 登录
-function handleSubmit(formEl){
-    console.log(formEl)
-    formEl.validate(valid =>{
-console.log(valid)
+function handleSubmit(formEl) {
+    formEl.validate(async valid => {
+        if (valid) {
+            let { status, msg,data } = await login({ ...form })
+            if (status) {
+                // 缓存数据
+                sessionStorage.id = data.id
+                sessionStorage.role = data.role
+                sessionStorage.token = data.token
+                // 登录成功弹窗
+                ElMessage({
+                    message: '登录成功',
+                    type: 'success',
+                })
+                // 跳转页面
+                router.push('/admin')
+            } else {
+                // 登陆失败弹窗
+                ElMessage({
+                    message: msg,
+                    type: 'warning',
+                })
+            }
+        }
     })
 }
 </script>
@@ -62,6 +86,7 @@ console.log(valid)
     min-height: 100vh;
     background: url(../assets/img/login/bg.jpg) top center;
     background-size: cover;
+
     .form-card {
         position: absolute;
         top: 50%;

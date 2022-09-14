@@ -27,26 +27,77 @@ const router = createRouter({
       children: [
         {
           path: 'list',
+          name:'ArticleList',
           component: () => import('@/views/Article/List.vue'),
         },
         {
-          path: 'release',
-          component: () => import('@/views/Article/Release.vue'),
+          path: 'comment',
+          name:'ArticleComment',
+          component: () => import('@/views/Article/Comment.vue'),
+        },
+        {
+          path: 'tag',
+          name:'ArticleTag',
+          component: () => import('@/views/Article/Tag.vue'),
         },
       ]
     },
     {
-      path: '/manage',
-      name: 'Manage',
+      path: '/system',
+      name: 'System',
       component: Layout,
       children: [
         {
           path: 'list',
-          component: () => import('@/views/Manage/List.vue'),
+          name:'SystemList',
+          component: () => import('@/views/System/List.vue'),
         },
         {
-          path: 'release',
-          component: () => import('@/views/Article/Release.vue'),
+          path: 'edit',
+          name:'SystemEdit',
+          component: () => import('@/views/System/Edit.vue'),
+        },
+        
+      ]
+    },
+    {
+      path: '/notice',
+      name: 'Notice',
+      component: Layout,
+      children: [
+        {
+          path: 'list',
+          name:'NoticeList',
+          component: () => import('@/views/Notice/List.vue'),
+        },
+      ]
+    },
+    {
+      path: '/promotion',
+      name: 'Promotion',
+      component: Layout,
+      children: [
+        {
+          path: 'link',
+          name:'PromotionLink',
+          component: () => import('@/views/Promotion/Link.vue'),
+        },
+        {
+          path: 'slideshow',
+          name:'PromotionSlideshow',
+          component: () => import('@/views/Promotion/Slideshow.vue'),
+        },
+      ]
+    },
+    {
+      path: '/user',
+      name: 'User',
+      component: Layout,
+      children: [
+        {
+          path: 'list',
+          name:'UserList',
+          component: () => import('@/views/User/List.vue'),
         },
       ]
     },

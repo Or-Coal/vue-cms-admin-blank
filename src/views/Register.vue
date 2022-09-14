@@ -32,7 +32,7 @@
                     <el-checkbox label="同意本站用户协议" name="type" v-model="form.type" />
                 </el-form-item>
                 <el-form-item>
-                    <el-button color="#626aef" :disabled="!form.type">注册</el-button>
+                    <el-button color="#626aef" :disabled="!form.type" v-on:click="registerfun">注册</el-button>
                 </el-form-item>
                 <el-row class="row-bg" justify="space-between">
                     <el-col :span="5">
@@ -48,6 +48,8 @@
 </template>
 <script setup>
 import { ref, reactive } from 'vue'
+import admin from '@/api/admin.js'
+import { useRouter } from 'vue-router'
 const form = reactive({
     username: '',
     password: '',
@@ -91,11 +93,64 @@ const validatePass2 = (rule, value, callback) => {
     // 全部通过校验
     callback()
 }
+// 验证用户名是否已经被注册
+const validatePass3 = async (rule, value, callback) => {
+    if (value === '') {
+        callback(new Error('请输入用户名'))
+        return
+    }
+    const { status } = await admin.checkUsername({ username: form.username })
+    if (!status) {
+        callback(new Error('用户已被注册'))
+        return
+    }
+    console.log('aaa')
+    // 全部通过校验
+    callback()
+}
+// 拿到小router 实例对象
+const router = useRouter()
+// 注册
+function registerfun() {
+    formRef.value.validate(async valid => {
+        console.log("aaa")
+
+        if (!valid) {
+            ElMessage('请先填写您的信息')
+            return
+        } else {
+            const { status, msg, data } = await admin.register({ username: form.username, password: form.password, fullname: form.name, sex: form.sex, tel: form.phone })
+            if (status) {
+
+                // 缓存数据
+                sessionStorage.id = data.id
+                sessionStorage.role = data.role
+                sessionStorage.token = data.token
+                // 注册成功弹窗
+                ElMessage({
+                    message: msg,
+                    type: 'success',
+                })
+                // 跳转页面
+                router.push('/admin')
+            } else {
+                // 注册失败弹窗
+                ElMessage({
+                    message: msg,
+                    type: 'warning',
+                })
+            }
+        }
+
+
+
+    })
+}
 const rules = reactive({
     username: [
 
-        { required: true, message: '请输入账号!', trigger: 'blur' },
-        { min: 3, max: 20, message: '账户长度要求在3-20之间', trigger: 'blur' }
+        { required: true },
+        { validator: validatePass3, trigger: 'blur' }
     ],
     password: [
         { required: true },

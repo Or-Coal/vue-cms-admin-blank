@@ -5,6 +5,8 @@ import router from './router'
 import './assets/css/main.css'
 //图标组件
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+
+import '@/Plugins/axios.config.js'
 const app = createApp(App)
 // 全局注册所有图标
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
