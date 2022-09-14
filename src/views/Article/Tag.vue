@@ -8,9 +8,9 @@
                 </div>
             </div>
         </template>
-        <el-table :data="articleList" style="width: 100%">
+        <el-table :data="tagList" style="width: 100%">
             <el-table-column prop="id" label="#" />
-            <el-table-column prop="tagname" label="标签名称" />
+            <el-table-column prop="name" label="标签名称" />
             <el-table-column prop="operation" label="操作" width="200">
                 <el-row>
                     <el-button type="primary" plain>
@@ -33,27 +33,31 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const articleList = ref([
-    {
-        id: 1,
-        tagname: "web前端",
-    },
-    {
-        id: 2,
-        tagname: "后端",
-    },
-    {
-        id: 3,
-        tagname: "测试",
-    },
-    {
-        id: 4,
-        tagname: "数据",
-    },
+import { ref } from 'vue';
+import Article from '@/api/article';
 
-])
+
+const tagList = ref([]);
+
+//加载管理员列表的函数：
+
+async function loadList() {
+    let { status, msg, data, total } = await Article.taglist();
+    if (status) {
+        //获取到数据，渲染数据
+        tagList.value = data;
+        console.log(data);
+    } else {
+        //获取失败
+        ElMessage.error(msg);
+    }
+}
+
+//方法一：setup（推荐）
+loadList();
+
 </script>
+
 
 <style lang="less" scoped>
 .card-header {

@@ -5,10 +5,10 @@
                 <div>用户列表</div>
             </div>
         </template>
-        <el-table :data="articleList" style="width: 100%">
+        <el-table :data="userList" style="width: 100%">
             <el-table-column prop="id" label="#" />
             <el-table-column prop="username" label="用户名" />
-            <el-table-column prop="name" label="昵称" />
+            <el-table-column prop="nickname" label="昵称" />
             <el-table-column prop="sex" label="性别" />
             <el-table-column prop="tel" label="手机" />
             <el-table-column prop="operation" label="操作" width="200">
@@ -32,21 +32,24 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const articleList = ref([
-    {
-        id: 1,
-        username: "小米",
-        name: "黄小米",
-        sex: "女",
-        tel: "15879302869",
-    },
-    {
-        id: 2,
-        username: "李四",
-        name: "黄渤",
-        sex: "男",
-        tel: "15879946869",
-    },
-])
+import { ref } from 'vue';
+import Userlist from '@/api/user';
+
+let userList = ref([]);
+
+//加载管理员列表的函数：
+
+async function loadList() {
+    let { status, msg, data, total } = await Userlist.userlist();
+    if (status) {
+        //获取到数据，渲染数据
+        userList.value = data;
+        console.log(data);
+    } else {
+        //获取失败
+        ElMessage.error(msg);
+    }
+}
+loadList();
+
 </script>

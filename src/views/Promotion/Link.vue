@@ -10,9 +10,9 @@
         </template>
         <el-table :data="articleList" style="width: 100%">
             <el-table-column prop="id" label="#" width="100" />
-            <el-table-column prop="linkname" label="链接标题" />
-            <el-table-column prop="address" label="网站地址" />
-            <el-table-column prop="date" label="添加日期" />
+            <el-table-column prop="title" label="链接标题" />
+            <el-table-column prop="url" label="网站地址" />
+            <el-table-column prop="create_time" label="添加日期" />
             <el-table-column prop="operation" label="操作">
                 <el-row>
                     <el-button type="primary" plain>
@@ -34,22 +34,27 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const articleList = ref([
-    {
-        id: 1,
-        linkname: "百度",
-        address: 'https://www.baidu.com',
-        date: "2022-06-08  12:43:35",
-    },
-    {
-        id: 2,
-        linkname: "京东",
-        address: 'https://www.jingdong.com',
-        date: "2022-06-08  12:43:35",
-    },
-])
+import { ref } from 'vue';
+import Popularize from '@/api/popularize'
+let articleList = ref([])
+
+//加载友情链接列表的函数：
+
+async function loadList() {
+    let { status, msg, data, total } = await Popularize.list();
+    console.log(data);
+    if (status) {
+        //获取到数据，渲染数据
+        articleList.value = data;
+        // console.log(data);
+    } else {
+        //获取失败
+        ElMessage.error(msg);
+    }
+}
+loadList();
 </script>
+
 
 <style lang="less" scoped>
 .card-header {

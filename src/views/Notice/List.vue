@@ -5,11 +5,11 @@
                 <span>公告列表</span>
             </div>
         </template>
-        <el-table :data="NoticeData" style="width: 100%">
+        <el-table :data="noticeList" style="width: 100%">
             <el-table-column prop="id" label="#" />
             <el-table-column prop="title" label="标题" />
-            <el-table-column prop="date" label="发布日期" />
-            <el-table-column prop="update" label="更新日期" />
+            <el-table-column prop="create_time" label="发布日期" />
+            <el-table-column prop="update_time" label="更新日期" />
             <el-table-column prop="operation" label="操作" width="300">
                 <el-row>
                     <el-button type="primary" plain>
@@ -38,18 +38,24 @@
 </template>
 
 <script setup>
-const NoticeData = [
-    {
-        id: 1,
-        title: '登黄鹤楼',
-        date: '2016-05-03',
-        update: '2018-04-17',
-    },
-    {
-        id: 2,
-        title: '岳阳楼记',
-        date: '2016-05-02',
-        update: '2019-06-08',
-    },
-]
+import { ref } from 'vue';
+import Notice from '@/api/notice';
+
+let noticeList = ref([]);
+
+//加载管理员列表的函数：
+
+async function loadList() {
+    let { status, msg, data, total } = await Notice.noticelist();
+    if (status) {
+        //获取到数据，渲染数据
+        noticeList.value = data;
+        console.log(data);
+    } else {
+        //获取失败
+        ElMessage.error(msg);
+    }
+}
+loadList();
+
 </script>

@@ -1,10 +1,10 @@
 <template>
-    <el-card style="width: 60%">
+    <el-card style="width: 65%">
         <template #header>
             <div class="card-header">
                 <div>管理员角色</div>
                 <div>
-                    <el-button size="small" type="primary" plain>
+                    <el-button type="primary" plain>
                         <el-icon>
                             <Setting />
                         </el-icon>
@@ -13,31 +13,31 @@
                 </div>
             </div>
         </template>
-        <el-table :data="tableData" style="width: 100%">
-            <el-table-column prop="id" label="#" width="180" />
-            <el-table-column prop="classify" label="角色" width="150">
+        <el-table :data="personlist" style="width: 100%">
+            <el-table-column prop="id" label="#" />
+            <el-table-column label="角色">
                 <template #default="scope">
                     <el-tag disable-transitions>
-                        {{scope.row.classify }}
+                        {{scope.row.name }}
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="operation" label="操作" width="240">
+            <el-table-column prop="operation" label="操作" width="300">
                 <el-row>
-                    <el-button size="small" type="primary" plain>
+                    <el-button type="primary" plain>
                         <el-icon>
                             <EditPen />
                         </el-icon>
                     </el-button>
-                    <el-button size="small" type="danger" plain>
+                    <el-button type="danger" plain>
                         <el-icon>
                             <Delete />
                         </el-icon>
                     </el-button>
-                    <el-button size="small" type="primary" plain>
-                        <el-icon>
+                    <el-button icon="Setting" type="primary" plain>
+                        <!-- <el-icon>
                             <Setting />
-                        </el-icon>
+                        </el-icon> -->
                     </el-button>
                 </el-row>
             </el-table-column>
@@ -46,25 +46,27 @@
 </template>
 
 <script setup>
-const tableData = [
-    {
-        id: 1,
-        classify: "超级管理员",
-    },
-    {
-        id: 2,
-        classify: '管理员',
-    },
-    {
-        id: 3,
-        classify: '副管理',
-    },
-    {
-        id: 4,
-        classify: '董事',
-    },
-]
+import { ref } from 'vue';
+import Admin from '@/api/admin';
+let personlist = ref([]);
+
+//加载管理员列表的函数：
+
+async function loadList() {
+    let { status, msg, data, total } = await Admin.plist();
+    if (status) {
+        //获取到数据，渲染数据
+        personlist.value = data;
+        console.log(data);
+    } else {
+        //获取失败
+        ElMessage.error(msg);
+    }
+}
+loadList();
 </script>
+
+
 
 <style>
 .card-header {

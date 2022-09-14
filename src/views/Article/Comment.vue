@@ -5,12 +5,12 @@
                 <div>评论列表</div>
             </div>
         </template>
-        <el-table :data="articleList" style="width: 100%">
-            <el-table-column prop="id" label="#" width="100"/>
-            <el-table-column prop="title" label="文章标题" />
-            <el-table-column prop="username" label="用户" />
+        <el-table :data="commentList" style="width: 100%">
+            <el-table-column prop="id" label="#" width="100" />
+            <el-table-column prop="article_title" label="文章标题" />
+            <el-table-column prop="user_nickname" label="用户" />
             <el-table-column prop="content" label="留言内容" />
-            <el-table-column prop="date" label="留言日期" />
+            <el-table-column prop="create_time" label="留言日期" />
             <el-table-column prop="operation" label="操作">
                 <el-row>
                     <el-button type="primary" plain>
@@ -32,21 +32,26 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const articleList = ref([
-    {
-        id: 1,
-        title:"世界那么大，我先去看看!",
-        username: "黄小米",
-        content: "lalalala啦啦啦啦阿啦",
-        date: "2011-10-10 12:32:59",
-    },
-    {
-        id: 2,
-        title:"世界那么大，我想去看看!",
-        username: "黄大米",
-        content: "l啊啊啊啊啊啊啊啊啊啊",
-        date: "2011-10-17 12:32:59",
-    },
-])
+import { ref } from 'vue';
+import Article from '@/api/article';
+
+const commentList = ref([]);
+
+//加载评论列表的函数：
+
+async function loadList() {
+    let { status, msg, data, total } = await Article.commentlist();
+    if (status) {
+        //获取到数据，渲染数据
+        commentList.value = data;
+        console.log(data);
+    } else {
+        //获取失败
+        ElMessage.error(msg);
+    }
+}
+
+//方法一：setup（推荐）
+loadList();
+
 </script>
