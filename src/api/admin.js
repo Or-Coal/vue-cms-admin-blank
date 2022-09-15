@@ -16,6 +16,6 @@ export default {
     // 获取权限角色列表
     plist: (params) => axios.get('/role/list', { params }),
     // 获取管理员个人资料
-    adminInfo: (params) => axios.get('/admin/info', { params })
-
+    adminInfo: (params) => axios.get('/admin/info', { params }),
+    adminInfoP:(data) => axios.post('/admin/info', data)
 }
