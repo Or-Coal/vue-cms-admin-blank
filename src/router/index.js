@@ -57,6 +57,11 @@ const router = createRouter({
           name:'SystemEdit',
           component: () => import('@/views/System/Edit.vue'),
         },
+        {
+          path: 'listedit/:id',
+          name:'SystemListEdit',
+          component: () => import('@/views/System/ListEdit.vue'),
+        },
         
       ]
     },

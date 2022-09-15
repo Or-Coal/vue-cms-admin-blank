@@ -27,12 +27,14 @@
             <el-table-column prop="operation" label="操作">
                 <template #default="scope">
                     <el-row>
+                       <el-link :href="`/#/system/listedit/${scope.row.id}`">
                         <el-button size="small" type="primary" plain>
                             <el-icon>
                                 <EditPen />
                             </el-icon>
                             编辑
                         </el-button>
+                       </el-link>
                         <el-button size="small" type="danger" plain @click="handleRemove({id:scope.row.id},scope.row.$index)">
                             <el-icon>
                                 <Delete />
