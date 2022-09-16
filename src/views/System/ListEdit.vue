@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+import { reactive, ref,watchEffect,watch } from 'vue';
 //注意axios函数引入位置（发送axios）（最好放上面）
 import Admin from '@/api/admin';
 //获取vue实例对象(跳转页面)
@@ -61,26 +61,45 @@ let { id } = route.params
 let usernamecopy = ""
 //角色选择：
 let personlist = ref([]);
-// 获取页面数据
-let isLoadlist = async () => {
-    //加载管理员角色列表的函数：
-    let { status, msg, data } = await Admin.plist();
-    // 获取管理员个人资料
-    let { status: status_t, data: data_t } = await Admin.adminInfo({ id })
+//加载管理员角色列表的函数：
+let isplist = async () => {
+    let { status, data } = await Admin.plist();
     if (status) {
         //获取到数据，渲染数据
-        personlist.value = data;
-        console.log(data);
-    } else {
-        //获取失败
-        ElMessage.error(msg);
-    }
-    if (status_t) {
-        form.value = data_t
-        usernamecopy = data_t.username
+        // return 一个promise对象
+        return data
     }
 }
-isLoadlist(id)
+// 获取管理员个人资料
+let isadminInfo = async (id) => {
+    let { status, data } = await Admin.adminInfo({ id })
+
+    if (status) {
+        form.value = data
+        usernamecopy = data.username
+    }
+}
+// 获取页面数据
+let isLoadlist = async () => {
+let { id } = route.params
+try {
+    let  isplistdata = await isplist()
+    personlist.value =  isplistdata
+    await isadminInfo(id)
+} catch (err) {
+    ElMessage.error(err)
+} 
+}
+// 防止组件复用时页面不重新获取数据
+watchEffect(async()=>{
+    isLoadlist()
+})
+
+// 防止组件复用时页面不重新获取数据
+// watch(()=>route.params.id,()=>{
+//     isLoadlist()
+// },{immediate: true})
+
 // 提取token
 let token = sessionStorage.token;
 // 携带token
@@ -123,6 +142,7 @@ const handleUploadError = (error, uploadFile) => {
     //错误通知
     ElMessage.error(msg);
 }
+// 表单验证
 let form = ref({})
 // 验证用户名是否已经被注册
 const validatePass3 = async (rule, value, callback) => {
@@ -179,7 +199,6 @@ function handleSure(formEl) {
             let formCopy = JSON.parse(JSON.stringify({ id, ...form.value }))
             delete formCopy.role_name
             const { status, msg, data } = await Admin.adminInfoP(formCopy)
-            console.log(status, msg, data)
             //校验成功
             if (status) {
                 //修改成功
