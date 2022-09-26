@@ -30,8 +30,8 @@
 </template>
 <script setup>
 import { ref, reactive } from 'vue'
-import {login} from '@/api/admin.js'
-import { useRouter } from 'vue-router'
+import { login } from '@/api/admin.js'
+import { useRouter, useRoute } from 'vue-router'
 const form = reactive({
     username: '',
     password: ''
@@ -51,11 +51,13 @@ const rules = reactive({
 })
 // 拿到小router 实例对象
 const router = useRouter()
+const route = useRoute()
 // 登录
 function handleSubmit(formEl) {
     formEl.validate(async valid => {
         if (valid) {
-            let { status, msg,data } = await login({ ...form })
+
+            let { status, msg, data } = await login({ ...form })
             if (status) {
                 // 缓存数据
                 sessionStorage.id = data.id
@@ -66,8 +68,12 @@ function handleSubmit(formEl) {
                     message: '登录成功',
                     type: 'success',
                 })
-                // 跳转页面
-                router.push('/admin')
+                if (route.query.redirect) {
+                    router.push(route.query.redirect)
+                } else {
+                    // 跳转页面
+                    router.push('/admin')
+                }
             } else {
                 // 登陆失败弹窗
                 ElMessage({

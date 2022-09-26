@@ -16,7 +16,7 @@
                     </el-icon>
                     <span>文章管理</span>
                 </template>
-                <el-menu-item index="2-1">
+                <el-menu-item index="/article/release">
                     <el-icon>
                         <DocumentAdd />
                     </el-icon>
@@ -56,7 +56,7 @@
                     </el-icon>
                     <span>公告管理</span>
                 </template>
-                <el-menu-item index="4-1">
+                <el-menu-item index="/notice/release">
                     <el-icon>
                         <Calendar />
                     </el-icon>
@@ -132,7 +132,7 @@
                     <span>菜单管理</span>
                 </el-menu-item>
             </el-sub-menu>
-            <el-menu-item index="8">
+            <el-menu-item index="/account/list">
                 <el-icon>
                     <Postcard />
                 </el-icon>

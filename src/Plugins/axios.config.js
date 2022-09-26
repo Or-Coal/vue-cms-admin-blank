@@ -1,6 +1,6 @@
 import axios from 'axios'
 // 默认发送请求的地址
-axios.defaults.baseURL = 'http://localhost:3001';
+axios.defaults.baseURL = 'http://127.0.0.1:3001';
 
 // 添加请求拦截器
 axios.interceptors.request.use(function (config) {

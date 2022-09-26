@@ -4,7 +4,7 @@
         <el-card class="form-card">
             <template #header>
                 <div class="card-header">
-                    <span>编辑管理员</span>
+                    <span>账户设置</span>
                 </div>
             </template>
             <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
@@ -13,11 +13,6 @@
                 </el-form-item>
                 <el-form-item label="姓名" prop="fullname">
                     <el-input v-model="form.fullname" />
-                </el-form-item>
-                <el-form-item label="角色" prop="role">
-                    <el-select v-model="form.role" class="m-2" placeholder="请选择权限" size="large">
-                        <el-option v-for="item in personlist" :key="item.id" :label="item.name" :value="item.id" />
-                    </el-select>
                 </el-form-item>
                 <el-form-item label="性别" prop="sex">
                     <el-radio-group v-model="form.sex" class="ml-4">
@@ -31,7 +26,7 @@
                 <el-form-item label="邮箱" prop="email">
                     <el-input v-model="form.email" />
                 </el-form-item>
-                <el-form-item label="头像">
+                <el-form-item label="头像" prop="avatar">
                     <el-upload class="avatar-uploader" action="http://localhost:3001/upload/common/" :headers="headers"
                         :data="extra" :show-file-list="false" accept=".png,.jpg,.jpeg" :on-success="handleUploadSuccess"
                         :on-error="handleUploadError" :before-upload="handlebeforeUpload">
@@ -41,72 +36,39 @@
                         </el-icon>
                     </el-upload>
                 </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="handleKeep(formRef)">修改资料</el-button>
+                </el-form-item>
             </el-form>
-            <el-link>
-                <el-button type="primary" v-on:click="handleSure(formRef)">保存修改</el-button>
-            </el-link>
-
         </el-card>
     </div>
 </template>
 
+
 <script setup>
-import { reactive, ref,watchEffect,watch } from 'vue';
+import { reactive, ref,onMounted} from 'vue';
 //注意axios函数引入位置（发送axios）（最好放上面）
 import Admin from '@/api/admin';
+import popularize from '@/api/popularize';
 //获取vue实例对象(跳转页面)
-import { useRouter, useRoute } from 'vue-router';
-let route = useRoute()
-let { id } = route.params
-let usernamecopy = ""
-//角色选择：
-let personlist = ref([]);
-//加载管理员角色列表的函数：
-let isplist = async () => {
-    let { status, data } = await Admin.plist();
+import { useRouter } from 'vue-router';
+//form对象 整个表单
+let form = ref({});
+let id = sessionStorage.id
+//加载管理员个人信息
+onMounted(async()=>{
+    let { status, data } =await Admin.adminInfo({ id });
     if (status) {
-        //获取到数据，渲染数据
-        // return 一个promise对象
-        return data
+       form.value = data
     }
-}
-// 获取管理员个人资料
-let isadminInfo = async (id) => {
-    let { status, data } = await Admin.adminInfo({ id })
-
-    if (status) {
-        form.value = data
-     
-    }
-}
-// 获取页面数据
-let isLoadlist = async () => {
-let { id } = route.params
-try {
-    let  isplistdata = await isplist()
-    personlist.value =  isplistdata
-    await isadminInfo(id)
-} catch (err) {
-    ElMessage.error(err)
-} 
-}
-// 防止组件复用时页面不重新获取数据
-watchEffect(async()=>{
-    isLoadlist()
 })
-
-// 防止组件复用时页面不重新获取数据
-// watch(()=>route.params.id,()=>{
-//     isLoadlist()
-// },{immediate: true})
-
-// 提取token
+//头像：
+//提取token
 let token = sessionStorage.token;
-// 携带token
 let headers = { Authorization: `Bearer ${token}` };
-// 附加参数：
+//附加参数：
 let extra = { type: 'avatar' };
-// 上传之前的检查：
+//上传之前的检查：
 const handlebeforeUpload = (rawFile) => {
     //判断图片格式/^image\/(jpeg|png|jpg)$/
     let isValid = /^image\/(jpeg|png|jpg)$/.test(rawFile.type);
@@ -121,20 +83,20 @@ const handlebeforeUpload = (rawFile) => {
     }
     return true;
 }
-// 上传成功
+//上传成功
 const handleUploadSuccess = ({ status, msg, src }, uploadFile) => {
-    console.log(status, msg, uploadFile);
+    // console.log(status, msg, uploadFile);
     if (status) {
         //上传成功
         //生成图片地址
-        form.value.avatar = src
+        form.value.avatar = src;
         ElMessage.success(msg);
     } else {
         //上传失败
         ElMessage.error(msg);
     }
 }
-// 上传失败
+//上传失败
 const handleUploadError = (error, uploadFile) => {
     // console.log(error);
     //将json对象 转换 为对象并解析出来
@@ -142,60 +104,61 @@ const handleUploadError = (error, uploadFile) => {
     //错误通知
     ElMessage.error(msg);
 }
-// 表单验证
-let form = ref({})
-// 验证用户名是否已经被注册
+
+//获取form组件实例---校验登录
+const formRef = ref();
+
 //校验表单：
 const rules = reactive({
     username: [
-    { required: true, message: '请输入用户名!', trigger: 'blur' },
+        { required: true, message: '请输入用户名!', trigger: 'blur' },
         { min: 3, max: 20, required: true, message: '账户长度要求在3-20之间', trigger: 'blur' }
     ],
     fullname: [
         { required: true, message: '请输入姓名!', trigger: 'blur' },
         { min: 1, max: 10, message: '姓名长度要求在1-10之间', trigger: 'blur' }
     ],
-    role: [
-        { required: true, message: '请选择角色!', trigger: 'change' },
-    ],
     sex: [
         { required: true, message: '请选择性别!', trigger: 'change' },
     ],
     tel: [
-        { required: true, message: '请输入手机号码', trigger: 'blur' },
-        { pattern: /^1(([3,5,8]\d{9})|(4[5,7]\d{8})|(7[0,6-8]\d{8}))$/, message: '手机号码不符合规则', trigger: 'blur' }
+        { required: true, message: '请输入手机号码!', trigger: 'blur' },
+        { pattern: /^1(34[0-8]|705|(3[5-9]|5[0127-9]|8[23478]|78)\d)\d{7}$/, message: '手机号码不符合规则！', trigger: 'blur' }
     ],
     email: [
-        { required: true, message: '请输入邮箱', trigger: 'blur' },
-        { pattern: /^[\da-z]+([\-\.\_]?[\da-z]+)*@[\da-z]+([\-\.]?[\da-z]+)*(\.[a-z]{2,})+$/, message: '请输入邮箱', trigger: 'blur' }
+        { required: true, message: '请输入邮箱号!', trigger: 'blur' },
+        { pattern: /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/, message: '请输入正确的邮箱地址！', trigger: 'blur' }
     ],
+    avatar: [
+        { required: true }
+    ]
 });
-//获取form组件实例---校验登录
-const formRef = ref();
+
 //获取router实例对象
 let router = useRouter();
 //保存按钮——校验
-function handleSure(formEl) {
+function handleKeep(formEl) {
     formEl.validate(async (valid, fields) => {
+        //校验成功
         if (valid) {
-            let formCopy = JSON.parse(JSON.stringify({ id, ...form.value }))
-            delete formCopy.role_name
-            const { status, msg, data } = await Admin.adminInfoP(formCopy)
-            //校验成功
+            const { status, msg } = await popularize.adminaccount(form.value);
             if (status) {
                 //修改成功
                 ElMessage.success(msg);
                 // 跳转页面
                 router.push('/system/list');
+            } else {
+                ElMessage.error(msg);
             }
         } else {
             //未通过校验
-            // console.log('校验失败(字段)', fields);
-            //修改失败
-            ElMessage.error(msg);
+            console.log('校验失败(字段)', fields);
+            //注册失败
+            ElMessage.error("校验未通过，保存修改失败！");
         }
     })
 }
+
 </script>
 
 
