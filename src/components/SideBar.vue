@@ -1,8 +1,8 @@
 <template>
     <div class="bg">
-        <el-menu active-text-color="#ffd04b" background-color="#545c64" text-color="#fff" router>
+        <el-menu :collapse="menu.isCollapsed" active-text-color="#ffd04b" background-color="#545c64" text-color="#fff"  router>
 
-            <el-menu-item index="1">
+            <el-menu-item index="/admin">
                 <el-icon>
                     <DataAnalysis />
                 </el-icon>
@@ -42,7 +42,7 @@
                 </el-menu-item>
             </el-sub-menu>
 
-            <el-menu-item index="3">
+            <el-menu-item index="/admin">
                 <el-icon>
                     <DataAnalysis />
                 </el-icon>
@@ -142,11 +142,26 @@
     </div>
 </template>
 <script>
+    import {useMenuStore} from '@/stores/menu.js'
+    export default {
+setup(){
+    let menu = useMenuStore()
+   
+    
+    return {
+        menu
+    }
+}
+    }
+
 </script>
 <style lang='less' scoped>
 .bg {
     background-color: #545c64;
     min-height: calc(100vh - 60px);
     height: 100%;
+}
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+  width: 200px;
 }
 </style>

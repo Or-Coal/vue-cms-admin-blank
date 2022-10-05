@@ -4,7 +4,7 @@
             <NavBar />
         </el-header>
         <el-container>
-            <el-aside width="200px">
+            <el-aside width="auto">
                 <SideBar />
             </el-aside>
             <el-main>

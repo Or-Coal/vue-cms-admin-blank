@@ -26,7 +26,7 @@
                 <el-form-item label="邮箱" prop="email">
                     <el-input v-model="form.email" />
                 </el-form-item>
-                <el-form-item label="头像" prop="avatar">
+                <!-- <el-form-item label="头像" prop="avatar">
                     <el-upload class="avatar-uploader" action="http://localhost:3001/upload/common/" :headers="headers"
                         :data="extra" :show-file-list="false" accept=".png,.jpg,.jpeg" :on-success="handleUploadSuccess"
                         :on-error="handleUploadError" :before-upload="handlebeforeUpload">
@@ -35,6 +35,9 @@
                             <Plus />
                         </el-icon>
                     </el-upload>
+                </el-form-item> -->
+                <el-form-item>
+                    <UploadPictures :PictorialInformation="PictorialInformation" />
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="handleKeep(formRef)">修改资料</el-button>
@@ -46,22 +49,31 @@
 
 
 <script setup>
-import { reactive, ref,onMounted} from 'vue';
+import { reactive, ref, onMounted } from 'vue';
 //注意axios函数引入位置（发送axios）（最好放上面）
 import Admin from '@/api/admin';
 import popularize from '@/api/popularize';
 //获取vue实例对象(跳转页面)
 import { useRouter } from 'vue-router';
+import { useAccountStore } from '@/stores/account';
+import { storeToRefs } from 'pinia';
+// 引入封装的上传图片组件
+import UploadPictures from '@/components/UploadPictures.vue'
 //form对象 整个表单
 let form = ref({});
 let id = sessionStorage.id
+//初始化
+let account = useAccountStore();
+//浅拷贝---还原表单——此处不需要storeToRefs———失去响应性(浅拷贝：保证不点修改不动数据)
+form.value = { ...account.profile };
+let { profile } = storeToRefs(account)
 //加载管理员个人信息
-onMounted(async()=>{
-    let { status, data } =await Admin.adminInfo({ id });
-    if (status) {
-       form.value = data
-    }
-})
+// onMounted(async()=>{
+//     let { status, data } =await Admin.adminInfo({ id });
+//     if (status) {
+//        form.value = data
+//     }
+// })
 //头像：
 //提取token
 let token = sessionStorage.token;
@@ -104,6 +116,18 @@ const handleUploadError = (error, uploadFile) => {
     //错误通知
     ElMessage.error(msg);
 }
+// 使用封装的上传图片的组件传入的信息
+let PictorialInformation = ref({})
+PictorialInformation.value = {
+    action: "http://localhost:3001/upload/common/",
+    headers,
+    extra,
+    accept: ".png,.jpg,.jpeg",
+    handleUploadSuccess,
+    handleUploadError,
+    handlebeforeUpload,
+}
+
 
 //获取form组件实例---校验登录
 const formRef = ref();
@@ -123,7 +147,7 @@ const rules = reactive({
     ],
     tel: [
         { required: true, message: '请输入手机号码!', trigger: 'blur' },
-        { pattern: /^1(34[0-8]|705|(3[5-9]|5[0127-9]|8[23478]|78)\d)\d{7}$/, message: '手机号码不符合规则！', trigger: 'blur' }
+        { pattern: /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/, message: '手机号码不符合规则！', trigger: 'blur' }
     ],
     email: [
         { required: true, message: '请输入邮箱号!', trigger: 'blur' },
@@ -141,7 +165,10 @@ function handleKeep(formEl) {
     formEl.validate(async (valid, fields) => {
         //校验成功
         if (valid) {
+            console.log(account)
             const { status, msg } = await popularize.adminaccount(form.value);
+            // 更新pinia中保存的管理员信息
+            await account.loadProfile(sessionStorage.id)
             if (status) {
                 //修改成功
                 ElMessage.success(msg);

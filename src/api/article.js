@@ -18,8 +18,12 @@ let remove = (data) => axios.post('/article/remove', data);
 let info = (params) => axios.get('/article/detail', { params });
 //编辑指定文章
 let edit = (data) => axios.post('/article/edit', data);
-
-
+//给指定文章标记标签
+let articletag = (data) => axios.post('/article/tag', data);
+//删除标签
+let removetag = (id, params) => axios.delete(`/tag/${id}`, { params });
+//编辑标签
+let edittag = (id, data) => axios.put(`/tag/${id}`, data);
 export default {
     edit,
     info,
@@ -34,5 +38,9 @@ export default {
     // 编辑标签
     tagcompile: (id, data) => axios.put(`/tag/${id}`, data),
     // 删除标签
-    tagremove: (id, params) => axios.delete(`/tag/${id}`, { params })
+    tagremove: (id, params) => axios.delete(`/tag/${id}`, { params }),
+    //给指定文章标记标签
+    articletag,
+    removetag,
+    edittag
 }

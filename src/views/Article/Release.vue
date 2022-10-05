@@ -36,7 +36,7 @@
                     </template>
                 </el-upload>
             </el-form-item>
-            <el-form-item label="内容" prop="content">
+            <el-form-item label="内容">
                 <div style="border: 1px solid #ccc">
                     <Toolbar style="border-bottom: 1px solid #ccc" :editor="editorRef" :defaultConfig="toolbarConfig" />
                     <Editor style="height: 500px; overflow-y: hidden;" v-model="form.content"
@@ -120,9 +120,6 @@ const rules = reactive({
     cate_1st: [
         { required: true, message: '必选项', trigger: 'change'  }
     ],
-    picture: [
-        { required: true }
-    ]
 });
 
 //发布按钮：

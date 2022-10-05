@@ -155,8 +155,6 @@ const router = createRouter({
 })
 // 全局前置守卫
 router.beforeEach((to, from) => {
-  console.log('to', to)
-  console.log(from)
   // 判断跳转的页面是否需要已登录的状态
   // if(to.name === 'Login'||to.name === 'Register'){
   //   return true
@@ -171,7 +169,6 @@ router.beforeEach((to, from) => {
     return true
 
   } else {
-    console.log(to.fullPath)
     return { name: 'Login', query: { redirect: to.fullPath } };
 
   }
