@@ -41,8 +41,7 @@
 <script setup>
 import { ref, defineProps } from 'vue'
 const props = defineProps(['PictorialInformation'])
-console.log(props.pictorial_information)
+console.log(props.PictorialInformation)
 const form = ref({})
-form.value = props.pictorial_information
-
+form.value = props.PictorialInformation
 </script>

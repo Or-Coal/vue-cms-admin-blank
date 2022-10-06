@@ -14,11 +14,12 @@
                     active-text="置顶" inactive-text="正常" />
             </el-form-item>
             <el-form-item label="内容" prop="content">
-                <div style="border: 1px solid #ccc">
+                <!-- <div style="border: 1px solid #ccc">
                     <Toolbar style="border-bottom: 1px solid #ccc" :editor="editorRef" :defaultConfig="toolbarConfig" />
                     <Editor style="height: 500px; overflow-y: hidden;" v-model="form.content"
                         :defaultConfig="editorConfig" @onCreated="handleCreated" />
-                </div>
+                </div> -->
+                <EditorModule v-model:data="data" />
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="handleRelease(formRef)">发布公告</el-button>
@@ -33,26 +34,22 @@ import Notice from '@/api/notice';
 // 引入 css
 import '@wangeditor/editor/dist/css/style.css';
 import { ref, reactive } from 'vue';
-import { onBeforeUnmount, shallowRef, onMounted } from 'vue';
-import { Editor, Toolbar } from '@wangeditor/editor-for-vue';
 //获取vue实例对象(跳转页面)
 import { useRouter } from 'vue-router';
+// 引入封装的富文本编辑框
+import EditorModule from '@/components/EditorModule.vue'
 //获取router实例对象
 let router = useRouter();
-
-//富文本编辑框:
-// 编辑器实例，必须用 shallowRef
-const editorRef = shallowRef();
+// //提取token
+// let token = sessionStorage.token;
+// let headers = { Authorization: `Bearer ${token}` };
+// 传入到富文本编辑器的数据
 //表单
 const form = reactive({
     title: '',
     is_sticky: '0',
     content: '',
 });
-// //提取token
-// let token = sessionStorage.token;
-// let headers = { Authorization: `Bearer ${token}` };
-const toolbarConfig = {};
 const editorConfig = {
     placeholder: '请输入内容...',
     MENU_CONF: {},
@@ -66,17 +63,7 @@ editorConfig.MENU_CONF['uploadImage'] = {
         Authorization: `Bearer ${sessionStorage.token}`,
     },
 }
-// 组件销毁时，也及时销毁编辑器
-onBeforeUnmount(() => {
-    const editor = editorRef.value
-    if (editor == null) return
-    editor.destroy()
-});
-// 记录 editor 实例，重要！
-const handleCreated = (editor) => {
-    editorRef.value = editor
-};
-
+const data = ref({form,editorConfig})
 //表单验证：
 //获取form组件实例---校验登录
 const formRef = ref();

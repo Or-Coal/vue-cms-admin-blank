@@ -13,8 +13,12 @@ export default {
     adminList: (params) => axios.get('/admin/list', { params }),
     // 删除账户
     listRemove: (data) => axios.post('/admin/remove', data),
+    // 为角色配置菜单
+    RoleMenu: (params) => axios.get('/role/menu/',{params}),
     // 获取权限角色列表
     plist: (params) => axios.get('/role/list', { params }),
+    //角色配置菜单
+    GroleMenu: (data) => axios.post('/role/menu', data),
     // 获取管理员个人资料
     adminInfo: (params) => axios.get('/admin/info', { params }),
     adminInfoP:(data) => axios.post('/admin/info', data)

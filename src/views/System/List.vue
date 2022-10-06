@@ -55,7 +55,6 @@ import admin from '@/api/admin'
 const arrlist = ref([])
 async function loadList() {
     let { status, msg, data, total } = await admin.adminList()
-    console.log(status, msg, data, total)
     arrlist.value = data
 
 }
@@ -68,7 +67,7 @@ function handleRemove(id,i) {
         type: 'error', confirmButtonText: '确认',
         cancelButtonText: '取消',
     }).then(async() => {
-     let {status} =    await admin.listRemove(id)
+     let {status} = await admin.listRemove(id)
      if(status){
         // 操作DOM
         arrlist.value.splice(i,1)
@@ -84,8 +83,8 @@ function handleRemove(id,i) {
         })
      }
        
-    })
-        .catch(() => {
+    }).catch((err) => {
+        console.log(err)
         })
 }
 // const arrlist = ref([

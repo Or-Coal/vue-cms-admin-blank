@@ -24,6 +24,30 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path: '/classify',
+      name: 'Classify',
+      component: Layout,
+      meta: { requiresAuth: true },
+      children: [{
+        path: 'administration',
+        name: 'Administration',
+        meta: { requiresAuth: true },
+        component: () => import('@/views/Classify/administration.vue'),
+      },]
+    },
+    {
+      path: '/message',
+      name: 'Message',
+      component: Layout,
+      meta: { requiresAuth: true },
+      children: [{
+        path: 'me',
+        name: 'Me',
+        meta: { requiresAuth: true },
+        component: () => import('@/views/Message/Me.vue'),
+      },]
+    },
+    {
       path: '/article',
       name: 'Article',
       component: Layout,
@@ -32,7 +56,7 @@ const router = createRouter({
         {
           path: 'list',
           name: 'ArticleList',
-      meta: { requiresAuth: false },
+          meta: { requiresAuth: false },
 
           component: () => import('@/views/Article/List.vue'),
         },
@@ -78,6 +102,11 @@ const router = createRouter({
           path: 'listedit/:id',
           name: 'SystemListEdit',
           component: () => import('@/views/System/ListEdit.vue'),
+        },
+        {
+          path: 'menu',
+          name: 'Menu',
+          component: () => import('@/views/System/menu.vue'),
         },
 
       ]

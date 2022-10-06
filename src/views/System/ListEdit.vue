@@ -32,14 +32,7 @@
                     <el-input v-model="form.email" />
                 </el-form-item>
                 <el-form-item label="头像">
-                    <el-upload class="avatar-uploader" action="http://localhost:3001/upload/common/" :headers="headers"
-                        :data="extra" :show-file-list="false" accept=".png,.jpg,.jpeg" :on-success="handleUploadSuccess"
-                        :on-error="handleUploadError" :before-upload="handlebeforeUpload">
-                        <img v-if="form.avatar" :src="form.avatar" class="avatar" />
-                        <el-icon v-else class="avatar-uploader-icon">
-                            <Plus />
-                        </el-icon>
-                    </el-upload>
+                  <UploadPictures :PictorialInformation="PictorialInformation"/>
                 </el-form-item>
             </el-form>
             <el-link>
@@ -56,6 +49,8 @@ import { reactive, ref,watchEffect,watch } from 'vue';
 import Admin from '@/api/admin';
 //获取vue实例对象(跳转页面)
 import { useRouter, useRoute } from 'vue-router';
+// 引入封装的上传图片组件
+import UploadPictures from '@/components/UploadPictures.vue'
 let route = useRoute()
 let { id } = route.params
 let usernamecopy = ""
@@ -76,7 +71,7 @@ let isadminInfo = async (id) => {
 
     if (status) {
         form.value = data
-     
+        PictorialInformation.value.avatar = data.avatar
     }
 }
 // 获取页面数据
@@ -87,7 +82,7 @@ try {
     personlist.value =  isplistdata
     await isadminInfo(id)
 } catch (err) {
-    ElMessage.error(err)
+    // ElMessage.error(err)
 } 
 }
 // 防止组件复用时页面不重新获取数据
@@ -128,6 +123,7 @@ const handleUploadSuccess = ({ status, msg, src }, uploadFile) => {
         //上传成功
         //生成图片地址
         form.value.avatar = src
+        PictorialInformation.value.avatar = src
         ElMessage.success(msg);
     } else {
         //上传失败
@@ -144,6 +140,18 @@ const handleUploadError = (error, uploadFile) => {
 }
 // 表单验证
 let form = ref({})
+// 使用封装的上传图片的组件传入的信息
+let PictorialInformation = ref({})
+PictorialInformation.value = {
+    action: "http://localhost:3001/upload/common/",
+    headers,
+    extra,
+    accept: ".png,.jpg,.jpeg",
+    handleUploadSuccess,
+    handleUploadError,
+    handlebeforeUpload,
+    avatar:""
+}
 // 验证用户名是否已经被注册
 //校验表单：
 const rules = reactive({

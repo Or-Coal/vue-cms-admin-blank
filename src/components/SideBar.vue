@@ -2,7 +2,7 @@
     <div class="bg">
         <el-menu :collapse="menu.isCollapsed" active-text-color="#ffd04b" background-color="#545c64" text-color="#fff"  router>
 
-            <el-menu-item index="/admin">
+            <el-menu-item index="/message/me">
                 <el-icon>
                     <DataAnalysis />
                 </el-icon>
@@ -42,7 +42,7 @@
                 </el-menu-item>
             </el-sub-menu>
 
-            <el-menu-item index="/admin">
+            <el-menu-item index="/classify/administration">
                 <el-icon>
                     <DataAnalysis />
                 </el-icon>
@@ -125,7 +125,7 @@
                     </el-icon>
                     <span>权限角色</span>
                 </el-menu-item>
-                <el-menu-item index="7-3">
+                <el-menu-item index="/system/menu">
                     <el-icon>
                         <SetUp />
                     </el-icon>
