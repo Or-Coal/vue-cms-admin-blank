@@ -78,7 +78,6 @@
 import { ref, reactive, onMounted, watch } from 'vue';
 import Admin from '@/api/admin';
 let personlist = ref([]);
-let aaa = () => Math.random()
 //加载管理员角色列表的函数：
 
 async function loadList() {
@@ -157,8 +156,7 @@ function handleRemove(id, i) {
             cancelButtonText: '取消',
             confirmButtonText: '确认'
         }
-    )
-        .then(async () => {
+    ).then(async () => {
             //确认按钮——1：发送ajax给后台—---2：等ajax成功后再删除DOM【不传id的话，后台报错500】
             //1:
             let { status, msg } = await Admin.premove(id, { ...form.value });  // id: id  简化为  id
@@ -171,10 +169,10 @@ function handleRemove(id, i) {
                 ElMessage.error("删除失败！");
             }
         })
-        .catch(() => {
-            //删除失败
-            ElMessage.error("取消删除");
-        })
+        // .catch(() => {
+        //     //删除失败
+        //     ElMessage.error("取消删除");
+        // })
 }
 
 

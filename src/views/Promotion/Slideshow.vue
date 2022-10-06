@@ -117,6 +117,7 @@ function handleRemove(id, i) {
             //确认按钮——1：发送ajax给后台—---2：等ajax成功后再删除DOM【不传id的话，后台报错500】
             //1:
             let { status, msg } = await Popularize.premove({ id });  // id: id  简化为  id
+            console.log(status)
             if (status) {
                 //删除成功
                 ElMessage.success(msg);
@@ -126,7 +127,6 @@ function handleRemove(id, i) {
                 //删除失败
                 ElMessage.error(msg);
             }
-            //2:
 
         })
         .catch(() => {
@@ -194,7 +194,7 @@ function handleEdit(formEl) {
                 //关闭弹窗
                 dialogVisible.value = false;
                 // 跳转页面
-                router.push('/popularize/slideshow');
+                router.push('/promotion/slideshow');
             } else {
                 ElMessage.error(msg);
             }

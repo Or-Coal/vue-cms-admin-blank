@@ -20,7 +20,7 @@
                         </el-icon>
                         回复
                     </el-button>
-                    <el-button type="danger" plain>
+                    <el-button type="danger" plain @click="handleRemove(scope.row.id)">
                         <el-icon>
                             <Delete />
                         </el-icon>
@@ -96,30 +96,32 @@ async function Reply(id) {
 function handleCancle() {
     dialogVisible.value = false;
 }
-//弹窗中 确定回复内容的按钮
-let formRef = ref([]);
-let handleReply = (formEl) => {
-    formEl.validate(async (valid, fields) => {
-        //校验成功
-        if (valid) {
-            let { status, msg, data } = await Comment.reply({ ...form.value });
-            console.log(form.value);
-            if (status) {
-                //修改成功--修改内容--关闭弹窗
-                ElMessage.success(msg);
-                form.value[currentid.value] = { ...form.value };
-                dialogVisible.value = false;
-            } else {
-                ElMessage.error(msg);
-                dialogVisible.value = false;
-            }
-        } else {
-            //未通过校验
-            console.log('校验失败(字段)', fields);
-            //注册失败
-            ElMessage.error("校验未通过，回复失败！");
+
+//删除按钮：
+function handleRemove(id) {
+    //弹出确认删除框---confirm(传三个参数，用不到的可以不传)
+    ElMessageBox.confirm(
+        '确认隐藏此评论嘛?',
+        '确认删除',
+        {
+            type: 'warning',
+            cancelButtonText: '取消隐藏',
+            confirmButtonText: '确认隐藏'
+        }
+    ).then(async () => {
+        let { status, msg } = await Comment.CommentRemove({ id })
+        if (status) {
+            commentList.value.forEach((item, index) => {
+                if (item.id == id) commentList.value.splice(index, 1)
+            })
+            ElMessage.success('隐藏成功');
         }
     })
-}
+        .catch(() => {
 
+            ElMessage.error('取消隐藏')
+        })
+
+
+}
 </script>

@@ -111,7 +111,6 @@ let handleInsert = (formEl) => {
                     current_data.value.children = []
                 }
                 current_data.value.children.push(newChild);
-                treeDate.value = [...treeDate.value];
                 //关闭dialog弹窗
                 insert_dialog_visible.value = false;
             }
@@ -156,7 +155,8 @@ let handleEdit = (formEl) => {
 
 //删除按钮
 let handleRemove = (node, data) => {
-    ElMessageBox.confirm('此操作将永久删除该分类，确定删除嘛？', { type: 'warning' })
+    ElMessageBox.confirm('此操作将永久删除该分类，确定删除嘛？', { type: 'warning', cancelButtonText: '取消',
+            confirmButtonText: '确认'})
         .then(async () => {
             let { status, msg } = await Category.remove({ id: data.id });
             if (status) {
@@ -165,16 +165,15 @@ let handleRemove = (node, data) => {
                 const children = parent.data.children || parent.data;
                 const index = children.findIndex((d) => d.id === data.id);
                 children.splice(index, 1);
-                treeDate.value = [...treeDate.value]
                 //消息提示
                 ElMessage.success(msg);
             } else {
                 ElMessage.error(msg);
             }
-        })
-        .catch(() => {
+        })    .catch(() => {
             ElMessage.info('取消成功');
         })
+    
 }
 
 </script>

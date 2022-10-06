@@ -70,6 +70,7 @@ loadList();
 // console.log(is_sticky);
 
 function handleTop(id, is_sticky, index, scope) {
+
     ElMessageBox.confirm(
         '此操作将顶置该公告，是否继续?',
         {
@@ -81,6 +82,11 @@ function handleTop(id, is_sticky, index, scope) {
         .then(async () => {
             //确认按钮——1：发送ajax给后台—---2：等ajax成功后再(取消）顶置DOM
             //1:
+            noticeList.value.forEach((item) => {
+                if (item.id == id) {
+                    item.is_sticky = !item.is_sticky
+                }
+            })
             if (is_sticky) {
                 //取消顶置
                 is_sticky = 0;

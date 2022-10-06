@@ -14,12 +14,14 @@
             </el-form-item>
             <el-form-item label="分类" prop="classify">
                 <el-space>
-                    <el-select prop="cate_1st" v-model="value" class="m-2" placeholder="Select">
-                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+                    <el-select v-model="form.cate_1st" class="m-2" placeholder="Select">
+                        <el-option v-for="item in options_1st" :key="item.id" :label="item.name" :value="item.id" />
                     </el-select>
-                    <el-select prop="cate_2nd" v-model="value" class="m-2" placeholder="Select">
-                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-                    </el-select>
+                    <el-space>
+                        <el-select v-model="form.cate_2nd" class="m-2" placeholder="Select">
+                            <el-option v-for="item in options_2nd" :key="item.id" :label="item.name" :value="item.id" />
+                        </el-select>
+                    </el-space>
                 </el-space>
             </el-form-item>
             <el-form-item label="主图" prop="main_photo">
@@ -46,21 +48,43 @@
 
 <script setup>
 import Article from '@/api/article';
+import Category from '@/api/category';
+import Notice from '@/api/notice';
 // 引入 css
 import '@wangeditor/editor/dist/css/style.css';
 import { ref, reactive } from 'vue';
-import { onBeforeUnmount, shallowRef, onMounted } from 'vue';
+import { onBeforeUnmount, shallowRef, onMounted, watch } from 'vue';
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue';
 //获取vue实例对象(跳转页面)
 import { useRouter, useRoute } from 'vue-router';
 //获取router实例对象
 let router = useRouter();
-
-//还原表单
-//1、获取两级分类：
-
 //2、form对象 整个表单
 let form = ref({});
+//还原表单
+//1、获取两级分类：
+//1、获取两级分类：先获取一级分类，然后watch监听，得到二级分类
+//一级分类列表
+let options_1st = ref([]);
+//二级分类列表
+let options_2nd = ref([]);
+//请求子集分类
+let loadSubcate = async (id) => {
+    let { status, data } = await Category.subcate({ id });
+    if (status) {
+        return data;
+    }
+}
+onMounted(async () => {
+    options_1st.value = await loadSubcate(0);
+});
+//watch监听一级分类，得到二级分类 
+watch(() => form.value.cate_1st, async (newValue) => {
+    options_2nd.value = await loadSubcate(newValue);
+    form.value.cate_2nd = options_2nd.value[0].name;
+
+});
+
 //获取对象
 let route = useRoute();
 //解构参数

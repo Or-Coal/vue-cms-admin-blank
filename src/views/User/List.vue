@@ -55,7 +55,7 @@ loadList();
 //禁用。启用。 按钮
 function handleopen(id, usable) {
     ElMessageBox.confirm(
-        '此操作将禁用/启用该公告，是否继续?',
+        '此操作将启用/禁用账户，是否继续?',
         {
             type: 'warning',
             cancelButtonText: '取消',
@@ -65,30 +65,28 @@ function handleopen(id, usable) {
         .then(async () => {
             //确认按钮——1：发送ajax给后台—---2：等ajax成功后再修改页面DOM文字
             //1:
-            if (usable) {
-                let { status, msg } = await Userlist.use({ id, usable });
+            console.log(usable)
+            let is_sticky = 0
+           if(usable==1) is_sticky=0
+           if(usable==0) is_sticky=1
+           console.log(is_sticky)
+                let { status, msg } = await Userlist.use({ id, usable:is_sticky});
                 if (status) {
+                userList.value.forEach((item)=>{
+                    if(item.id = id){
+                        if(usable==1) item.usable=0
+           if(usable==0) item.usable=1
+                    }
+                })
+
                     //成功
                     ElMessage.success(msg);
-                    //2:赋值//更改文字： 禁用—————>启用
-                    usable = 0;
                 } else {
                     //操作失败
                     ElMessage.error(msg);
                 };
-            } else {
-                let { status, msg } = await Userlist.use({ id, usable });
-                if (status) {
-                    //成功
-                    ElMessage.success(msg);
-                    //2:赋值更改文字： 启用—————>禁用
-                    usable = 1;
-                } else {
-                    //顶置失败
-                    ElMessage.error(msg);
-                };
-            }
-        })
+            } 
+        )
         .catch(() => {
             //取消按钮
             ElMessage('操作失败!');

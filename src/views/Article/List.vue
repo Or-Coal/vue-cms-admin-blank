@@ -28,7 +28,7 @@
                 <el-row>
                     <el-space>
                         <el-link :href="`/#/article/listedit/${scope.row.id}`">
-                            <el-button type="primary" plain>
+                            <el-button type="primary" plain @click="handcompile(scope.row.id,scope.$index)">
                                 <el-icon>
                                     <EditPen />
                                 </el-icon>
@@ -84,7 +84,7 @@
                 <el-input style="height:40px">
                     <template #prefix>
                         <el-space>
-                            <el-tag v-for="(item,index) in input[tagid].tags" :key="item.id" class="mx-1"
+                            <el-tag v-for="(item,index) in inputcopy[tagid].tags" :key="item.id" class="mx-1"
                                 :disable-transitions="true"  @click="handleCanceltag(item,item.id,index)"
                                 type="success" plain>
                                 {{item.name}}
@@ -114,7 +114,7 @@
 <script setup>
 import { ref, onMounted, reactive } from 'vue';
 import Article from '@/api/article';
-
+import { useRouter, useRoute } from 'vue-router'
 const articleList = ref([]);
 
 //加载文章列表的函数：
@@ -143,7 +143,12 @@ loadList();
 //         ElMessage.error(msg);
 //     }
 // })
-
+const router = useRouter()
+// 编辑按钮
+//  /article/listedit 
+// let handcompile = ()=>{
+//     router.push('/article/listedit')
+// }
 //标记按钮：
 //弹窗
 let tagid = ref([]);
@@ -152,10 +157,12 @@ let dialogVisible = ref(false);
 //存一下文章id（在标签弹窗保存时使用）
 let articleid = ref([]);
 let input = ref([]);
+let inputcopy = ref([]);
 let handletag = (i, id) => {
     // console.log(i);
     // console.log(id);
     input.value = articleList.value;
+    inputcopy.value = JSON.parse(JSON.stringify(articleList.value))
     dialogVisible.value = true;
     tagid.value = id;
     // console.log(tagid.value);
@@ -180,7 +187,7 @@ let handleCanceltag = (i, id, index) => {
     // console.log(id);
     // console.log(input.value[tagid.value].tags);
     // console.log(index);
-    input.value[tagid.value].tags.splice(index, 1);
+    inputcopy.value[tagid.value].tags.splice(index, 1);
 }
 //弹窗中---下面所有标签的点击事件
 let current = "";
@@ -188,7 +195,7 @@ let handldeadd = (item, id) => {
     // console.log(item);
     // console.log(id);
     let ishave = '';
-    current = input.value[tagid.value].tags;
+    current = inputcopy.value[tagid.value].tags;
     // console.log(current);
     //已经存在的标签不需要再添加
     for (var thing = 0; thing < current.length; thing++) {

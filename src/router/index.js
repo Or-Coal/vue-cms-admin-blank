@@ -42,7 +42,7 @@ const router = createRouter({
       meta: { requiresAuth: true },
       children: [{
         path: 'me',
-        name: 'Me',
+        name: 'MessageMe',
         meta: { requiresAuth: true },
         component: () => import('@/views/Message/Me.vue'),
       },]
@@ -71,7 +71,7 @@ const router = createRouter({
           component: () => import('@/views/Article/Tag.vue'),
         },
         {
-          path: 'listedit',
+          path: 'listedit/:id',
           name: 'ArticleListEdit',
           component: () => import('@/views/Article/ListEdit.vue'),
         },
@@ -123,7 +123,7 @@ const router = createRouter({
           component: () => import('@/views/Notice/List.vue'),
         },
         {
-          path: 'listedit',
+          path: 'listedit/:id',
           name: 'NoticeListEdit',
           component: () => import('@/views/Notice/ListEdit.vue'),
         },
