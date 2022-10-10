@@ -1,4 +1,5 @@
 import axios from 'axios'
+import router from '@/router'
 // 默认发送请求的地址
 axios.defaults.baseURL = 'http://127.0.0.1:3001';
 
@@ -24,5 +25,34 @@ axios.interceptors.response.use(function (response) {
 }, function (error) {
     // 超出 2xx 范围的状态码都会触发该函数。
     // 对响应错误做点什么
-    return Promise.reject(error);
+    // return Promise.reject(error);
+    let { response: { status } ,config:{url}} = error
+    //消息提示
+    switch (status) {
+        case 401: ElNotification.error({
+            title: `错误${status}`,
+            message: '登陆的token过期或者无效请重新登录',
+        });
+            // 获取当前页面路径
+            let { fullPath } = router.currentRoute.value
+            // 重定向到登陆页面，附带redirect参数
+            router.replace({ name: 'Login', query: { redirect: fullPath } })
+            break;
+        case 403: ElNotification.error({
+            title: `错误${status}`,
+            message: '登陆的token过期或者无效请重新登录',
+        });
+        break;
+        case 404: ElNotification.error({
+            title: `错误${status}`,
+            message: `API接口:${url},地址不存在`,
+        });
+        break;
+        case 500: ElNotification.error({
+            title: `错误${status}`,
+            message: `API接口:${url}错误,请检查Network,再联系后台`,
+        });
+        break;
+    }
+
 });

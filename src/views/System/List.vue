@@ -19,7 +19,7 @@
             </el-table-column>
             <el-table-column prop="person" label="角色" width="130">
                 <template #default="scope">
-                    <el-tag type="success" disable-transitions>
+                    <el-tag :type='scope.row.id === 1 ? "danger":"success"' disable-transitions>
                         {{scope.row.role_name }}
                     </el-tag>
                 </template>
@@ -35,7 +35,7 @@
                             编辑
                         </el-button>
                        </el-link>
-                        <el-button size="small" type="danger" plain @click="handleRemove({id:scope.row.id},scope.row.$index)">
+                        <el-button size="small" type="danger" :disabled="scope.row.id === 1" plain @click="handleRemove({id:scope.row.id},scope.row.$index)">
                             <el-icon>
                                 <Delete />
                             </el-icon>
