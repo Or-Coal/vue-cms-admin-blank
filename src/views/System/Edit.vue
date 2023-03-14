@@ -1,64 +1,51 @@
 <template>
-    <el-card style="width: 65%">
-        <template #header>
-            <div class="card-header">
-                <div>管理员角色</div>
-                <div>
-                    <el-button type="primary" plain>
-                        <el-icon m-3>
-                            <CirclePlus />
-                        </el-icon>
-                        添加角色
-                    </el-button>
+    <div class="content">
+        <el-card class="box-card">
+            <template #header>
+                <div class="card-header">
+                    <span>管理员角色</span>
+                    <el-button @click="handleOpen('添加角色')" icon="Plus" type="primary">添加角色</el-button>
                 </div>
-            </div>
-        </template>
-        <el-table :data="personlist" style="width: 100%">
-            <el-table-column prop="id" label="#" />
-            <el-table-column label="角色">
-                <template #default="scope">
-                    <el-tag disable-transitions>
-                        {{scope.row.name }}
-                    </el-tag>
-                </template>
-            </el-table-column>
-            <el-table-column prop="operation" label="操作" width="300" #default="scope">
-                <el-row>
-                    <el-button type="primary" plain @click="handleOpenDialog(scope.row,scope.$index)"
-                        :disabled="scope.row.id===1">
-                        <el-icon>
-                            <EditPen />
-                        </el-icon>
-                    </el-button>
-                    <el-button type="danger" plain @click="handleRemove(scope.row.id,scope.$index)"
-                        :disabled="scope.row.id===1">
-                        <el-icon>
-                            <Delete />
-                        </el-icon>
-                    </el-button>
-                    <el-button icon="Setting" type="primary" plain @click="handleMenu(scope.row.id,scope.$index)">
-                        <!-- <el-icon>
-                            <Setting />
-                        </el-icon> -->
-                    </el-button>
-                </el-row>
-            </el-table-column>
-        </el-table>
-    </el-card>
-    <!-- 编辑按钮 dialog 弹窗 -->
-    <el-dialog v-model="dialogVisible" title="编辑角色">
-        <el-form ref="formRef" :rules="rules" :model="form">
-            <el-form-item label="链接标题" prop="name" status-icon label-width="80px">
-                <el-input v-model="form.name" />
-            </el-form-item>
-        </el-form>
-        <template #footer>
-            <span class="dialog-footer">
-                <el-button @click="handleCancle">取消</el-button>
-                <el-button type="primary" @click="handleEdit(formRef)">保存</el-button>
-            </span>
-        </template>
-    </el-dialog>
+            </template>
+            <el-table :data="tableData" style="width: 100%">
+                <el-table-column prop="id" label="#" width="" />
+                <el-table-column prop="name" label="分类" />
+
+                <el-table-column fixed="right" label="操作" width="270">
+                    <template #default="scope">
+                        <el-space>
+                            <el-button @click="handleOpen('编辑角色', scope.row, scope.$index)" icon="EditPen"
+                                type="primary">编辑</el-button>
+
+                            <el-button icon="Delete" type="danger" @click.stop="handleRemove(scope.row.id, scope.$index)">
+                                删除
+                            </el-button>
+                            <el-button icon="Setting" type="success" @click.stop="handleMenu(scope.row.id, scope.$index)">
+                                权限
+                            </el-button>
+                        </el-space>
+
+
+                    </template>
+                </el-table-column>
+            </el-table>
+
+        </el-card>
+        <!-- 编辑/添加 -->
+        <el-dialog v-model="dialogVisible" :title='titleName'>
+            <el-form ref="formRef" :model="titleData" :rules="rules" status-icon label-width="80px">
+                <el-form-item label="标签名称" prop="name">
+                    <el-input v-model="titleData.name" />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="dialogVisible = false">取消</el-button>
+                    <el-button type="primary" @click="handleSubmit(formRef)">确定</el-button>
+                </span>
+            </template>
+        </el-dialog>
+    </div>
     <!-- 弹出侧边栏菜单 -->
     <!-- :style="{'visibility':isvisibility}" -->
     <el-dialog v-model="menuside" title="设置角色菜单" class="menuside" :modal="false" append-to-body>
@@ -71,111 +58,124 @@
             </span>
         </template>
     </el-dialog>
-
 </template>
-
 <script setup>
-import { ref, reactive, onMounted, watch } from 'vue';
+import { ref, onMounted, reactive,watch} from 'vue';
+import Roles from "@/api/roles";
 import Admin from '@/api/admin';
-let personlist = ref([]);
-//加载管理员角色列表的函数：
+import Menu from '@/api/menu';
 
-async function loadList() {
-    let { status, msg, data, total } = await Admin.plist();
-    console.log(data)
-    if (status) {
-        //获取到数据，渲染数据
-        personlist.value = data;
-        console.log(data);
-    } else {
-        //获取失败
-        ElMessage.error(msg);
-    }
-}
-loadList();
-// 为角色配置菜单
+
+let tableData = ref([])
 onMounted(async () => {
-
+    let { status, msg, total, data } = await Roles.list();
+    if (status) {
+        tableData.value = data
+    }
 })
 
-//编辑按钮
-let form = ref({});
-let dialogVisible = ref(false);
-//存一下更改的标签的位置
+let dialogVisible = ref(false)
+let titleName = ref()
+let titleData = ref({ name: '' })
 let current = ref(0);
-//（编辑按钮）点击事件---打开弹窗
-let handleOpenDialog = (data, i) => {
-    //浅拷贝，还原表单
-    form.value = { ...data };
-    console.log({ ...data });
-    // 记录当前行索引
-    current.value = i;
-    dialogVisible.value = true;
+
+let handleOpen = (title, data, i) => {
+    titleName.value = title
+    // if (title == '编辑角色') {
+    titleData.value = { ...data };
+    // }
+    dialogVisible.value = true
 }
-//点击 编辑框中 取消标签按钮
-function handleCancle() {
-    dialogVisible.value = false;
+//添加角色
+//添加表单验证
+const validateName = (rule, value, callback) => {
+    if (value === '') {
+        callback(new Error('请输入角色名'));
+        return;
+    }
+    if (!(value.length >= 1 && value.length <= 30)) {
+        callback(new Error('角色长度要求1-30个字符之间3个字符'));
+        return;
+    }
+    if (titleName.value == '添加角色') {
+
+        tableData.value.forEach((item) => {
+            if (value === item.name) {
+                callback(new Error('已经存在此角色'));
+                return;
+            }
+        })
+    }
+
+    callback();
 }
-//点击保存，验证表单，关闭弹窗
-//获取form组件实例---校验登录
-let formRef = ref();
-//表单验证：
 const rules = reactive({
-    name: [
-        { required: true, message: '请输入名称!', trigger: 'blur' },
-    ],
+    name: [{ validator: validateName, required: true, trigger: 'blur' },],
 });
-let handleEdit = (formEl) => {
-    //表单验证
+// 弹窗确定
+let formRef = ref()
+let handleSubmit = (formEl) => {
     formEl.validate(async (valid) => {
         if (valid) {
-            let { status, msg } = await Admin.pedit(form.value.id, { ...form.value });
-            // console.log(form.value.id, { ...form.value });
+            if (titleName.value == '编辑标签') {
+                let { status, msg } = await Roles.edit(titleData.value.id, { ...titleData.value });
+                if (status) {
+                    //修改成功，操作DMO
+                    //current.value索引值
+                    tableData.value[current.value] = { ...titleData.value }
+                    //关闭
+                    dialogVisible.value = false;
+                    //提示
+                    ElMessage.success(msg)
+
+                } else {
+                    //提示错误
+                    ElMessage.error(msg)
+                }
+                return
+            }
+            let { status, msg, data } = await Roles.create({ name: titleData.value.name });
             if (status) {
-                //操作DOM
-                personlist.value[current.value] = { ...form.value };
-                //关闭窗口
+                //添加
+                // loadList();
                 dialogVisible.value = false;
-                // 提示成功
-                ElMessage.success(msg);
+                tableData.value.push({ id: data.id, name: titleData.value.name })
+                // titleData.value = ''
+                ElMessage.success(msg)
             } else {
-                // 提示错误
-                ElMessage.error(msg);
+                //提示错误
+                ElMessage.error(msg)
             }
         }
     })
 }
-
-//删除按钮
-function handleRemove(id, i) {
-    //弹出确认删除框---confirm(传三个参数，用不到的可以不传)
-    ElMessageBox.confirm(
-        '确认删除此文章嘛?',
+// 删除
+let handleRemove = (id, i) => {
+    ElMessageBox.confirm('确认删除此角色吗？', '确认',
         {
-            type: 'warning',
+            type: 'error',
             cancelButtonText: '取消',
-            confirmButtonText: '确认'
-        }
-    ).then(async () => {
-            //确认按钮——1：发送ajax给后台—---2：等ajax成功后再删除DOM【不传id的话，后台报错500】
-            //1:
-            let { status, msg } = await Admin.premove(id, { ...form.value });  // id: id  简化为  id
+            confirmButtonText: '删除'
+        })
+        .then(async () => {
+            //确定
+            let { status, msg } = await Roles.remove(id, { id });
             if (status) {
-                //删除成功
+                //操作DMO
+                tableData.value.splice(i, 1);
+                //提示
                 ElMessage.success(msg);
-                //2:
-                personlist.value.splice(i, 1);
             } else {
-                ElMessage.error("删除失败！");
+                //提示
+                ElMessage.error(msg)
             }
         })
-        // .catch(() => {
-        //     //删除失败
-        //     ElMessage.error("取消删除");
-        // })
+        .catch(() => {
+            //取消
+            ElMessage('取消成功')
+        })
+
 }
-
-
 //设置按钮——————tree树
 const defaultProps = {
     children: 'children',
@@ -209,8 +209,7 @@ watch(isId, async (news, old) => {
 
 })
 
-// 
-let isvisibility = ref('hidden')
+
 // 拿到tree对象
 const treeRef = ref()
 
@@ -218,37 +217,38 @@ const treeRef = ref()
 let handleMenu = async (id, index) => {
 
     isId.value = id
-    let { data: datas, } = await Admin.RoleMenu({ id: 1, type: "tree" });
-    data.value = [{ id: 1, name: '全部菜单', children: datas }]
-    let { data: dataunfold, } = await Admin.RoleMenu({ id: 1, type: "flat" });
+    // loadMenuList()
+    // let { data: datas, } = await Admin.RoleMenu({ id, type: "tree" });
+      let { data:datatal } = await Menu.list({ type: 'tree' })
+data.value = datatal
+    // data.value = [{ id: 1, name: '全部菜单', children: datas }]
+    let { data: dataunfold, } = await Admin.RoleMenu({ id, type: "flat" });
     dataunfold.forEach((item) => {
         unfoldarr.value.push(item.id)
     })
-
+console.log(data.value)
     // isvisibility.value = 'visible'
     menuside.value = !menuside.value
 }
-let savemenu = async()=>{
+let savemenu = async () => {
     menuside.value = false
-    console.log(treeRef.value.getCheckedKeys(true))
-let {status,msg}=await Admin.GroleMenu({id:isId.value,menus:treeRef.value.getCheckedKeys(true)})
-if(status){
-    ElMessage.success(msg);
-     isId.value= 0
-}else{
-    ElMessage.error(msg);
-}
+    // 获取当前选中的node节点（包含半选中父级节点）
+    let checked_nodes = treeRef.value.getCheckedNodes(false, true);
+    // 转化为id数组
+    let checked_keys = checked_nodes.map((menu) => menu.id);
+    // console.log(treeRef)
+    let {status,msg}=await Admin.GroleMenu({id:isId.value,menus:checked_keys})
+
+
+    if(status){
+        ElMessage.success(msg);
+         isId.value= 0
+    }else{
+        ElMessage.error(msg);
+    }
 }
 </script>
-
-
-
-<style>
-.card-header {
-    display: flex;
-    justify-content: space-between;
-}
-
+<style lang="less" scoped>
 .menuside {
     position: fixed;
     right: 0;
@@ -257,5 +257,4 @@ if(status){
     margin: 0;
     padding: 0;
 
-}
-</style>
+}</style>

@@ -3,7 +3,7 @@
         <el-menu :collapse="menu.isCollapsed" active-text-color="#ffd04b" :defaultOpeneds="defaultOpeneds" background-color="#545c64" text-color="#fff"
             router>
             <!-- 实现每个用户侧边栏不同 -->
-            <!-- <div v-for="item in menu_tree" :key="item.id">
+            <div v-for="item in menu_tree" :key="item.id">
                 <el-sub-menu v-if="item.children" :index="item.id">
                     <template #title>
                         <el-icon>
@@ -24,10 +24,10 @@
                     </el-icon>
                     <span>{{item.name}}</span>
                 </el-menu-item>
-            </div> -->
+            </div>
 
 
-            <el-menu-item index="/message/me">
+            <!-- <el-menu-item index="/message/me">
                 <el-icon>
                     <DataAnalysis />
                 </el-icon>
@@ -162,7 +162,7 @@
                     <Postcard />
                 </el-icon>
                 <span>账户设置</span>
-            </el-menu-item>
+            </el-menu-item> -->
         </el-menu>
     </div>
 </template>
